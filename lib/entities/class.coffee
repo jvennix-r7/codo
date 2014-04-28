@@ -6,6 +6,8 @@ Mixin      = require './mixin'
 MetaMethod = require '../meta/method'
 Entities   = require '../_entities'
 
+MAX_RECURSION_DEPTH = 100
+
 module.exports = class Entities.Class extends require('../entity')
 
   @looksLike: (node) ->
@@ -45,8 +47,8 @@ module.exports = class Entities.Class extends require('../entity')
     [selfish, container] = @determineContainment(source)
     @fetchName(source, selfish, container)
 
-  fetchNamespaceFromModuleDefinition: (source) ->
-    return null unless source?
+  fetchNamespaceFromModuleDefinition: (source, depth=0) ->
+    return null unless depth < MAX_RECURSION_DEPTH and source?
 
     if source.constructor.name is 'Call'
       if source.variable?.properties?
@@ -57,7 +59,7 @@ module.exports = class Entities.Class extends require('../entity')
           outer_namespace = JSON.parse(source.args?[0]?.base.value)
           return outer_namespace
 
-    @fetchNamespaceFromModuleDefinition(source.ancestor)
+    @fetchNamespaceFromModuleDefinition(source.ancestor, depth+1)
 
   fetchName: (source, selfish, container) ->
     name = []

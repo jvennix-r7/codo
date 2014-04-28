@@ -239,7 +239,7 @@ module.exports = class Entities.Class extends require('../entity')
           owner: @parent
         }
 
-      properties.concat(parent.inheritedProperties(depth+1))
+      properties.concat(@parent.inheritedProperties(depth+1))
 
   inspect: ->
     {

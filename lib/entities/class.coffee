@@ -1,3 +1,4 @@
+_          = require 'underscore'
 Method     = require './method'
 Variable   = require './variable'
 Property   = require './property'
@@ -44,6 +45,20 @@ module.exports = class Entities.Class extends require('../entity')
     [selfish, container] = @determineContainment(source)
     @fetchName(source, selfish, container)
 
+  fetchNamespaceFromModuleDefinition: (source) ->
+    return null unless source?
+
+    if source.constructor.name is 'Call'
+      if source.variable?.properties?
+        mod_call = _.find source.variable.properties, (prop) ->
+          prop?.constructor?.name is 'Access' and
+            prop?.name?.value is 'module'
+        if mod_call
+          outer_namespace = JSON.parse(source.args?[0]?.base.value)
+          return outer_namespace
+
+    @fetchNamespaceFromModuleDefinition(source.ancestor)
+
   fetchName: (source, selfish, container) ->
     name = []
 
@@ -51,9 +66,14 @@ module.exports = class Entities.Class extends require('../entity')
     # the namespace from the containing class
     name.push container.name if container
 
+    # Pull the names from Marionettes #module pattern
+    prefix = @fetchNamespaceFromModuleDefinition(source)
+    if prefix
+      name.push(prefix.split(".")...)
+
     # Take the actual name of assignation unless
     # we are prefixed with `@`
-    name.push source.base.value if !selfish && source.base?
+    name.push source.base.value if !prefix && !selfish && source.base?
 
     # Get the rest of actual assignation path
     if source.properties

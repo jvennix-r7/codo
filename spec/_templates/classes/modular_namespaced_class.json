@@ -1,0 +1,35 @@
+[
+  {
+    "file": "spec/_templates/classes/modular_namespaced_class.coffee",
+    "methods": [],
+    "variables": []
+  },
+  {
+    "file": "spec/_templates/classes/modular_namespaced_class.coffee",
+    "documentation": {
+      "comment": "Test description 1",
+      "summary": "Test description 1"
+    },
+    "name": "Namespace1.Namspace2.AnotherClass1",
+    "methods": [],
+    "variables": [],
+    "properties": [],
+    "includes": [],
+    "extends": [],
+    "concerns": []
+  },
+  {
+    "file": "spec/_templates/classes/modular_namespaced_class.coffee",
+    "documentation": {
+      "comment": "Test description 2",
+      "summary": "Test description 2"
+    },
+    "name": "Namespace1.Namspace2.AnotherClass2",
+    "methods": [],
+    "variables": [],
+    "properties": [],
+    "includes": [],
+    "extends": [],
+    "concerns": []
+  }
+]

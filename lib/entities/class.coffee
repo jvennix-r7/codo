@@ -214,11 +214,13 @@ module.exports = class Entities.Class extends require('../entity')
     entries.filter (entry) ->
       found[entry.entity.name] = true unless found[entry.entity.name]
 
-  inheritedMethods: ->
+  inheritedMethods: (depth=0) ->
+    return [] if depth > MAX_RECURSION_DEPTH
     @_inheritedMethods ||= @inherited =>
-      @parent.allMethods().concat @parent.inheritedMethods()
+      @parent.allMethods().concat @parent.inheritedMethods(depth+1)
 
-  inheritedVariables: ->
+  inheritedVariables: (depth=0) ->
+    return [] if depth > MAX_RECURSION_DEPTH
     @_inheritedVariables ||= @inherited =>
       variables = @parent.variables.map (variable) =>
         {
@@ -226,9 +228,10 @@ module.exports = class Entities.Class extends require('../entity')
           owner: @parent
         }
 
-      variables.concat @parent.inheritedVariables()
+      variables.concat(@parent.inheritedVariables(depth+1))
 
   inheritedProperties: (depth=0) ->
+    return [] if depth > MAX_RECURSION_DEPTH
     @_inheritedProperties ||= @inherited =>
       properties = @parent.properties.map (property) =>
         {
@@ -236,7 +239,7 @@ module.exports = class Entities.Class extends require('../entity')
           owner: @parent
         }
 
-      properties.concat(if depth < MAX_RECURSION_DEPTH then @parent.inheritedProperties(depth+1) else [])
+      properties.concat(parent.inheritedProperties(depth+1))
 
   inspect: ->
     {

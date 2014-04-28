@@ -228,7 +228,7 @@ module.exports = class Entities.Class extends require('../entity')
 
       variables.concat @parent.inheritedVariables()
 
-  inheritedProperties: ->
+  inheritedProperties: (depth=0) ->
     @_inheritedProperties ||= @inherited =>
       properties = @parent.properties.map (property) =>
         {
@@ -236,7 +236,7 @@ module.exports = class Entities.Class extends require('../entity')
           owner: @parent
         }
 
-      properties.concat @parent.inheritedProperties()
+      properties.concat(if depth < MAX_RECURSION_DEPTH then @parent.inheritedProperties(depth+1) else [])
 
   inspect: ->
     {
